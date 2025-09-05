@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Beaker, Cpu, Microscope, Atom, Dna, Activity } from "lucide-react";
 
-const ResearchCard = ({ title, desc, color, icon: Icon }) => (
+const iconMap = {
+  "Computational Biology": Cpu,
+  "Synthetic Biology": Beaker,
+  "Imaging & Microscopy": Microscope,
+  "Molecular Biotechnology": Dna,
+  "Bioinformatics & Data Science": Activity,
+  "Biophysics & Structural Biology": Atom,
+};
+
+const ResearchCard = ({ title, description, color, icon: Icon }) => (
   <div
     className={`p-6 rounded-2xl border ${color} bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition`}
   >
@@ -11,48 +21,35 @@ const ResearchCard = ({ title, desc, color, icon: Icon }) => (
       </div>
       <h3 className="ml-3 text-xl font-semibold text-gray-800">{title}</h3>
     </div>
-    <p className="text-gray-600 text-justify">{desc}</p>
+    <p className="text-gray-600 text-justify">{description}</p>
   </div>
 );
 
 const ResearchAreas = () => {
-  const areas = [
-    {
-      title: "Computational Biology",
-      desc: "We design algorithms and models to study DNA, proteins, and cellular pathways. By integrating genomics and proteomics, our research accelerates biological discoveries and supports personalized medicine through systems-level insights.",
-      color: "border-sky-100",
-      icon: Cpu,
-    },
-    {
-      title: "Synthetic Biology",
-      desc: "Our work focuses on engineering microbes for sustainable production of fuels, chemicals, and medicines. We build genetic circuits and metabolic pathways to create innovative, eco-friendly solutions in healthcare and industry.",
-      color: "border-green-100",
-      icon: Beaker,
-    },
-    {
-      title: "Imaging & Microscopy",
-      desc: "Using advanced microscopy and computational image analysis, we visualize cells, proteins, and biomolecular interactions in real time. Our goal is to uncover biological mechanisms invisible to conventional imaging methods.",
-      color: "border-pink-100",
-      icon: Microscope,
-    },
-    {
-      title: "Molecular Biotechnology",
-      desc: "We manipulate DNA, RNA, and proteins with tools like CRISPR and recombinant technology. This enables novel therapeutic molecules, enzymes, and diagnostics while deepening our understanding of gene regulation and function.",
-      color: "border-purple-100",
-      icon: Dna,
-    },
-    {
-      title: "Bioinformatics & Data Science",
-      desc: "By applying AI, machine learning, and omics integration, we analyze large-scale biological data. Our pipelines identify biomarkers, predict disease outcomes, and drive drug discovery through computational insights.",
-      color: "border-yellow-100",
-      icon: Activity,
-    },
-    {
-      title: "Biophysics & Structural Biology",
-      desc: "We study proteins and nucleic acids using X-ray, cryo-EM, and NMR. Structural insights reveal molecular function, guiding the design of drugs, enzymes, and biomaterials for biotechnological applications.",
-      color: "border-red-100",
-      icon: Atom,
-    },
+  const [areas, setAreas] = useState([]);
+
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8001/api/v1/users/research-areas/"
+        );
+        setAreas(res.data.data);
+      } catch (err) {
+        console.error("Error fetching research areas:", err);
+      }
+    };
+    fetchAreas();
+  }, []);
+
+  // Assign border colors dynamically
+  const borderColors = [
+    "border-sky-100",
+    "border-green-100",
+    "border-pink-100",
+    "border-purple-100",
+    "border-yellow-100",
+    "border-red-100",
   ];
 
   return (
@@ -68,9 +65,19 @@ const ResearchAreas = () => {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {areas.map((a) => (
-          <ResearchCard key={a.title} {...a} />
-        ))}
+        {areas.map((a, i) => {
+          const Icon = iconMap[a.title] || Cpu; // fallback icon
+          const color = borderColors[i % borderColors.length];
+          return (
+            <ResearchCard
+              key={a._id || i}
+              title={a.title}
+              description={a.description}
+              color={color}
+              icon={Icon}
+            />
+          );
+        })}
       </div>
     </section>
   );

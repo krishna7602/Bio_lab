@@ -8,7 +8,8 @@ const AdminDashboard = ({ onClose }) => {
   const [links, setLinks] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+  const [researchAreas, setResearchAreas] = useState([]);
+  const [gallery, setGallery] = useState([]);
   // Form states
   const [personForm, setPersonForm] = useState({
     name: "",
@@ -22,6 +23,15 @@ const AdminDashboard = ({ onClose }) => {
   const [publicationForm, setPublicationForm] = useState({ title: "", authors: "", journal: "", year: "", description: "", link: "" });
   const [announcementForm, setAnnouncementForm] = useState({ title: "", date: "", link: "", important: false });
   const [linkForm, setLinkForm] = useState({ name: "", url: "", category: "" });
+  const [researchForm, setResearchForm] = useState({
+    title: "",
+    description: "",
+    keywords: "",
+  });
+  const [galleryForm, setGalleryForm] = useState({
+    title: "",
+    imageUrl: "",
+  });
 
   const fetchData = async () => {
     try {
@@ -33,6 +43,12 @@ const AdminDashboard = ({ onClose }) => {
       setAnnouncements(annRes.data.data);
       const linksRes = await axios.get("http://localhost:8001/api/v1/users/getAllUsefullLinks");
       setLinks(linksRes.data.data);
+      const researchRes = await axios.get(
+        "http://localhost:8001/api/v1/users/research-areas"
+      );
+      setResearchAreas(researchRes.data.data);
+      const galleryRes = await axios.get("http://localhost:8001/api/v1/users/gallery");
+      setGallery(galleryRes.data.data);
     } catch (err) {
       setError("Failed to fetch data");
       console.error(err);
@@ -132,6 +148,62 @@ const AdminDashboard = ({ onClose }) => {
       fetchData();
     } catch (err) { setError("Failed to delete link"); }
   };
+
+  const addResearchArea = async () => {
+    try {
+      const payload = {
+        ...researchForm,
+        keywords: researchForm.keywords
+          .split(",")
+          .map((k) => k.trim())
+          .filter((k) => k),
+      };
+      await axios.post(
+        "http://localhost:8001/api/v1/users/research-areas",
+        payload,
+        { withCredentials: true }
+      );
+      setSuccess("Research Area added successfully");
+      setResearchForm({ title: "", description: "", keywords: "" });
+      fetchData();
+    } catch (err) {
+      setError("Failed to add research area");
+    }
+  };
+  const deleteResearchArea = async (id) => {
+    try {
+      await axios.post(
+        `http://localhost:8001/api/v1/users/research-areas/${id}`,
+        { withCredentials: true }
+      );
+      setSuccess("Research Area deleted successfully");
+      fetchData();
+    } catch (err) {
+      setError("Failed to delete research area");
+    }
+  };
+
+  const addGallery = async () => {
+    try {
+      await axios.post("http://localhost:8001/api/v1/users/gallery", galleryForm, { withCredentials: true });
+      setSuccess("Image added successfully");
+      setGalleryForm({ title: "", imageUrl: "" });
+      fetchData();
+    } catch (err) {
+      setError("Failed to add image");
+    }
+  };
+
+  const deleteGallery = async (id) => {
+    try {
+      await axios.post(`http://localhost:8001/api/v1/users/gallery/${id}`, {}, { withCredentials: true });
+      setSuccess("Image deleted successfully");
+      fetchData();
+    } catch (err) {
+      setError("Failed to delete image");
+    }
+  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 overflow-auto flex justify-center items-start z-50 py-10">
@@ -347,6 +419,117 @@ const AdminDashboard = ({ onClose }) => {
   </ul>
 </section>
 
+{/* Research Areas */}
+<section className="mb-6 p-4 bg-gray-50 rounded shadow">
+  <h2 className="text-xl font-semibold mb-2">Manage Research Areas</h2>
+  <div className="flex flex-wrap gap-2 mb-2 items-center">
+    <input
+      type="text"
+      name="title"
+      placeholder="Title"
+      value={researchForm.title}
+      onChange={(e) => handleChange(e, setResearchForm, researchForm)}
+      className="border p-1 rounded"
+      required
+    />
+    <input
+      type="text"
+      name="description"
+      placeholder="Description"
+      value={researchForm.description}
+      onChange={(e) => handleChange(e, setResearchForm, researchForm)}
+      className="border p-1 rounded w-72"
+      required
+    />
+    <input
+      type="text"
+      name="keywords"
+      placeholder="Keywords (comma separated)"
+      value={researchForm.keywords}
+      onChange={(e) => handleChange(e, setResearchForm, researchForm)}
+      className="border p-1 rounded w-64"
+    />
+    <button
+      onClick={addResearchArea}
+      className="bg-sky-600 text-white px-3 rounded"
+    >
+      Add
+    </button>
+  </div>
+  <ul>
+    {researchAreas.map((r) => (
+      <li key={r._id} className="flex justify-between border-b py-1">
+        <div>
+          <span className="font-medium">{r.title}</span> —{" "}
+          <span className="text-sm text-gray-600">
+            {r.keywords?.join(", ")}
+          </span>
+        </div>
+        <button
+          onClick={() => deleteResearchArea(r._id)}
+          className="text-red-600"
+        >
+          Delete
+        </button>
+      </li>
+    ))}
+  </ul>
+</section>
+
+{/* Gallery */}
+<section className="mb-6 p-4 bg-gray-50 rounded shadow">
+  <h2 className="text-xl font-semibold mb-2">Manage Gallery</h2>
+
+  {/* Add Image Form */}
+  <div className="flex flex-wrap gap-2 mb-2 items-center">
+    <input
+      type="text"
+      name="title"
+      placeholder="Title"
+      value={galleryForm.title}
+      onChange={(e) => handleChange(e, setGalleryForm, galleryForm)}
+      className="border p-1 rounded"
+      required
+    />
+    <input
+      type="url"
+      name="imageUrl"
+      placeholder="Image URL"
+      value={galleryForm.imageUrl}
+      onChange={(e) => handleChange(e, setGalleryForm, galleryForm)}
+      className="border p-1 rounded w-72"
+      required
+    />
+    <button onClick={addGallery} className="bg-sky-600 text-white px-3 rounded">
+      Add
+    </button>
+  </div>
+
+  {/* List of Gallery Images */}
+  <ul className="space-y-2">
+    {gallery.map((g) => (
+      <li
+        key={g._id}
+        className="flex items-center justify-between border-b py-1"
+      >
+        <div className="flex items-center gap-3">
+          <img
+            src={g.imageUrl}
+            alt={g.title}
+            className="w-20 h-14 object-cover rounded border"
+          />
+          <span>{g.title}</span>
+        </div>
+        <button
+          onClick={() => deleteGallery(g._id)}
+          className="text-red-600"
+        >
+          Delete
+        </button>
+      </li>
+    ))}
+  </ul>
+</section>
 
 
         {/* Other sections (Publications, Announcements, Useful Links) remain mostly the same */}
