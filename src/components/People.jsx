@@ -1,50 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function People() {
-  const members = [
-    { name: "Neeraj", email: "neeraj.bt.19@nitj.ac.in" },
-    { name: "Aakriti Aggarwal", email: "aakritia.bt.19@nitj.ac.in" },
-    { name: "Nisha Rai", email: "nishar.bt.21@nitj.ac.in" },
-    { name: "Anushree Pant", email: "anushreep.bt.22@nitj.ac.in" },
-    { name: "Rishpreet Kaur", email: "rishpreetk.bt.22@nitj.ac.in" },
-    { name: "Siddhartha Dan", email: "siddharthad.bt.22@nitj.ac.in / siddharthadan7@gmail.com" },
-    { name: "Megha Mankoti", email: "megham.bt.22@nitj.ac.in" },
-    { name: "Deepika Umrao", email: "deepikau.bt.22@nitj.ac.in" },
-    { name: "Shivani Chauhan", email: "shivanic.bt.22@nitj.ac.in" },
-    { name: "Supraja Chandra", email: "suprajac.bt.23@nitj.ac.in" },
-    { name: "Sourav Singh Salaria", email: "souravss.bt.23@nitj.ac.in" },
-    { name: "Vikash", email: "vikash.bt.23@nitj.ac.in" },
-    { name: "Sandeep Shukla", email: "sandeepks.bt.23@nitj.ac.in" },
-    { name: "Payal Guleria", email: "payalg.bt.23@nitj.ac.in" },
-    { name: "Nisha Kumari Pandit", email: "nishakp.bt.23@nitj.ac.in" },
-    { name: "Sundeep Kaur", email: "sundeepk.bt.23@nitj.ac.in" },
-    { name: "Samay Shukla", email: "samayps.bt.23@nitj.ac.in" },
-    { name: "Aditi Sarkar", email: "aditis.bt.23@nitj.ac.in" }
-  ];
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-return (
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const res = await fetch("http://localhost:8001/api/v1/users/getAllStudent");
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          setMembers(data.data);
+        } else {
+          console.error("Invalid API response:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
+  return (
     <section id="people" className="py-16 bg-white border-b border-gray-200">
-        <div className="container mx-auto text-center px-4">
-            <h3 className="text-3xl font-extrabold mb-10 text-black tracking-tight">
-                Lab Members
-            </h3>
+      <div className="container mx-auto text-center px-4">
+        <h3 className="text-3xl font-extrabold mb-10 text-black tracking-tight">
+          Lab Members
+        </h3>
 
-            {/* Members Grid */}
-            <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-                {members.map((member, idx) => (
-                    <div
-                        key={idx}
-                        className="bg-gray-50 border border-gray-200 rounded-xl shadow-md p-6 hover:shadow-lg transition w-full max-w-xs"
+        {loading ? (
+          <p className="text-gray-600">Loading members...</p>
+        ) : (
+          <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+            {members.map((member, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-50 border border-gray-200 rounded-xl shadow-md p-6 hover:shadow-lg transition w-full max-w-xs"
+              >
+                {/* Profile Image or Fallback Initial */}
+                {member.imageUrl ? (
+                  <img
+                    src={member.imageUrl}
+                    alt={member.name}
+                    className="w-16 h-16 mx-auto mb-4 rounded-full object-cover border"
+                  />
+                ) : (
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                    {member.name?.charAt(0) || "?"}
+                  </div>
+                )}
+
+                {/* Member Info */}
+                <h4 className="text-lg font-semibold text-gray-800">{member.name}</h4>
+                <p className="text-sm text-gray-600 mt-1">{member.role}</p>
+                <p className="text-sm text-gray-600 mt-1">{member.category}</p>
+                <p className="text-sm text-gray-500 mt-1">{member.email}</p>
+                <p className="text-xs text-gray-500 mt-2">{member.bio}</p>
+
+                {/* Social Links */}
+                <div className="flex justify-center gap-4 mt-3 text-sm">
+                  {member.socialLinks?.linkedin && (
+                    <a
+                      href={member.socialLinks.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
                     >
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
-                            {member.name.charAt(0)}
-                        </div>
-                        <h4 className="text-lg font-semibold text-gray-800">{member.name}</h4>
-                        <p className="text-sm text-gray-600 mt-1">{member.email}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
+                      LinkedIn
+                    </a>
+                  )}
+                  {member.socialLinks?.github && (
+                    <a
+                      href={member.socialLinks.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-700 hover:underline"
+                    >
+                      GitHub
+                    </a>
+                  )}
+                  {member.socialLinks?.twitter && (
+                    <a
+                      href={member.socialLinks.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-500 hover:underline"
+                    >
+                      Twitter
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </section>
-);
+  );
 }

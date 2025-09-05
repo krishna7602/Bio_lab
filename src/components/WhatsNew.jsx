@@ -1,119 +1,125 @@
-import React, { useState, useEffect } from "react";
-import { X } from "lucide-react"; // icon for close button
+import React, { useEffect, useState } from "react";
 
-const announcements = [
-  {
-    title:
-      "5th International Conference on Recent Advance in Bioenergy Research (ICRABR)",
-    date: "6th - 9th October 2025",
-    link: "https://icrabr.com/",
-  },
-  {
-    title: "NABL accreditation for Testing (ISO/IEC 17025:2017)",
-    date: "Sep 2025",
-    link: "#",
-  },
-  {
-    title: "Recruitment for Junior Research Fellows",
-    date: "Aug 2025",
-    link: "#",
-  },
-];
-
-export default function WhatsNew() {
+export default function News() {
+  const [newsItems, setNewsItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    if (announcements.length > 0) {
-      setShowPopup(true); // show popup with all announcements
-    }
+    const fetchAnnouncements = async () => {
+      try {
+        const res = await fetch("http://localhost:8001/api/v1/users/getAllAnnouncement");
+        const data = await res.json();
+
+        const announcements = data.data || [];
+        setNewsItems(announcements);
+
+        if (announcements.length > 0) {
+          setShowPopup(true);
+        }
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
   }, []);
 
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    if (isNaN(date)) return dateStr;
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
-    <>
-      {/* Popup for ALL announcements */}
-      {showPopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="relative bg-white rounded-xl shadow-lg p-6 max-w-2xl w-full border border-gray-200">
-            {/* Close button */}
-            <button
-              onClick={() => setShowPopup(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-            >
-              <X size={20} />
-            </button>
+    <section id="news" className="py-16 bg-white border-b border-gray-200 relative">
+      <div className="container mx-auto px-4">
+        {/* Added px-4 here to give left/right spacing */}
+        <h3 className="text-3xl font-extrabold mb-10 text-black tracking-tight text-center">
+          News & Updates
+        </h3>
 
-            <h3 className="text-2xl font-bold mb-4 text-blue-700 border-b pb-2">
-              📢 Latest Announcements
-            </h3>
-
-            <ul className="space-y-4">
-              {announcements.map((item, i) => (
-                <li
-                  key={i}
-                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+        {loading ? (
+          <p className="text-gray-500 text-center">Loading announcements...</p>
+        ) : newsItems.length === 0 ? (
+          <p className="text-gray-500 text-center">No announcements available.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {newsItems
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .map((news) => (
+                <div
+                  key={news._id}
+                  className={`p-6 rounded-2xl shadow border transition mx-2
+                    ${
+                      news.important
+                        ? "bg-blue-600 border-blue-700 text-white"
+                        : "bg-white border-gray-300 text-black"
+                    }`}
                 >
-                  <h4 className="text-lg font-semibold text-gray-900">
-                    {item.title}
+                  <h4 className="text-xl font-semibold mb-2">
+                    <a
+                      href={news.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`hover:underline ${
+                        news.important ? "text-white" : "text-blue-700"
+                      }`}
+                    >
+                      {news.title}
+                    </a>
                   </h4>
-                  <p className="text-gray-600 text-sm mb-2">{item.date}</p>
+                  <p className="text-sm">{formatDate(news.date)}</p>
+                  {news.important && (
+                    <p className="text-yellow-300 font-bold mt-2">🔥 Important</p>
+                  )}
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
+
+      {/* Popup */}
+      {showPopup && newsItems.length > 0 && (
+        <div className="fixed bottom-10 right-10 w-full max-w-md bg-white border border-blue-400 shadow-2xl rounded-xl p-6 z-50">
+          <button
+            onClick={() => setShowPopup(false)}
+            className="absolute top-3 right-3 text-gray-600 hover:text-black text-lg font-bold"
+          >
+            ✖
+          </button>
+
+          <h4 className="text-2xl font-bold text-blue-700 mb-4">
+            Latest Announcements
+          </h4>
+          <ul className="list-disc pl-5 space-y-2">
+            {newsItems
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .slice(0, 5)
+              .map((item) => (
+                <li key={item._id} className="text-gray-800">
                   <a
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline font-medium"
+                    className="font-medium text-blue-600 hover:underline"
                   >
-                    View Details →
-                  </a>
+                    {item.title}
+                  </a>{" "}
+                  <span className="text-sm text-gray-500">
+                    ({formatDate(item.date)})
+                  </span>
                 </li>
               ))}
-            </ul>
-          </div>
+          </ul>
         </div>
       )}
-
-      {/* What's New Section (permanent table view) */}
-      <section className="py-16 bg-white border-b border-gray-200" id="news">
-        <div className="max-w-4xl mx-auto px-8">
-          <h3 className="text-3xl font-extrabold mb-10 text-blue-700 tracking-tight text-center border-b-2 border-blue-600 inline-block pb-2">
-            What's New
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-blue-600 text-white">
-                <tr>
-                  <th className="p-4 text-left">Title</th>
-                  <th className="p-4 text-left">Date</th>
-                  <th className="p-4 text-left">Link</th>
-                </tr>
-              </thead>
-              <tbody>
-                {announcements.map((item, i) => (
-                  <tr
-                    key={i}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition"
-                  >
-                    <td className="p-4 font-medium text-gray-800">
-                      {item.title}
-                    </td>
-                    <td className="p-4 text-gray-600">{item.date}</td>
-                    <td className="p-4">
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        View →
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </>
+    </section>
   );
 }
