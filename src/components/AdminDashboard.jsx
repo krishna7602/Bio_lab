@@ -10,6 +10,7 @@ const AdminDashboard = ({ onClose }) => {
   const [success, setSuccess] = useState("");
   const [researchAreas, setResearchAreas] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [faculty, setFaculty] = useState([]);
   // Form states
   const [personForm, setPersonForm] = useState({
     name: "",
@@ -32,7 +33,22 @@ const AdminDashboard = ({ onClose }) => {
     title: "",
     imageUrl: "",
   });
-
+  const [facultyForm, setFacultyForm] = useState({
+  name: "",
+  image: "",
+  designation: "",
+  department: "Bio Technology",
+  qualifications: "",
+  bio: "",
+  address: "",
+  email: "",
+  phone: "",
+  achievements: {
+    publications: 0,
+    awards: "",
+    projects: 0,
+  },
+});
   const fetchData = async () => {
     try {
       const peopleRes = await axios.get("http://localhost:8001/api/v1/users/getAllStudent");
@@ -49,6 +65,9 @@ const AdminDashboard = ({ onClose }) => {
       setResearchAreas(researchRes.data.data);
       const galleryRes = await axios.get("http://localhost:8001/api/v1/users/gallery");
       setGallery(galleryRes.data.data);
+
+      const facultyRes = await axios.get("http://localhost:8001/api/v1/users/faculty");
+    setFaculty(facultyRes.data.data);
     } catch (err) {
       setError("Failed to fetch data");
       console.error(err);
@@ -203,6 +222,73 @@ const AdminDashboard = ({ onClose }) => {
       setError("Failed to delete image");
     }
   };
+  // Fetch faculty
+const addFaculty = async () => {
+  try {
+    const payload = {
+      ...facultyForm,
+      qualifications: facultyForm.qualifications
+        .split(",")
+        .map((q) => q.trim()),
+      achievements: {
+        publications: Number(facultyForm.achievements.publications),
+        awards: facultyForm.achievements.awards
+          .split(",")
+          .map((a) => a.trim()),
+        projects: Number(facultyForm.achievements.projects),
+      },
+    };
+    await axios.post("http://localhost:8001/api/v1/users/faculty", payload, {
+      withCredentials: true,
+    });
+    setSuccess("Faculty added successfully");
+    fetchData();
+    setFacultyForm({
+      name: "",
+      image: "",
+      designation: "",
+      department: "Bio Technology",
+      qualifications: "",
+      bio: "",
+      address: "",
+      email: "",
+      phone: "",
+      achievements: {
+        publications: 0,
+        awards: "",
+        projects: 0,
+      },
+    });
+  } catch (err) {
+    setError("Failed to add faculty");
+  }
+};
+
+const deleteFaculty = async (id) => {
+  try {
+    await axios.post(`http://localhost:8001/api/v1/users/faculty/${id}`, {
+      withCredentials: true,
+    });
+    setSuccess("Faculty deleted successfully");
+    fetchData();
+  } catch (err) {
+    setError("Failed to delete faculty");
+  }
+};
+
+const updateFaculty = async (id, updatedData) => {
+  try {
+    await axios.put(
+      `http://localhost:8001/api/v1/users/faculty/${id}`,
+      updatedData,
+      { withCredentials: true }
+    );
+    setSuccess("Faculty updated successfully");
+    fetchData();
+  } catch (err) {
+    setError("Failed to update faculty");
+  }
+};
 
 
   return (
@@ -530,6 +616,188 @@ const AdminDashboard = ({ onClose }) => {
     ))}
   </ul>
 </section>
+
+{/* Faculty */}
+{/* Faculty */}
+<section className="mb-6 p-4 bg-gray-50 rounded shadow">
+  <h2 className="text-xl font-semibold mb-2">Manage Faculty</h2>
+
+  {/* Add Faculty Form */}
+  <div className="flex flex-wrap gap-2 mb-2 items-center">
+    <input
+      type="text"
+      name="name"
+      placeholder="Name"
+      value={facultyForm.name}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-64"
+      required
+    />
+    <input
+      type="url"
+      name="image"
+      placeholder="Image URL"
+      value={facultyForm.image}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-64"
+      required
+    />
+    <input
+      type="text"
+      name="designation"
+      placeholder="Designation"
+      value={facultyForm.designation}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-64"
+      required
+    />
+    <input
+      type="text"
+      name="department"
+      placeholder="Department"
+      value={facultyForm.department}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-64"
+    />
+    <textarea
+      name="bio"
+      placeholder="Short Bio"
+      value={facultyForm.bio}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-full"
+      rows={2}
+    />
+    <textarea
+      name="qualifications"
+      placeholder="Qualifications (comma separated)"
+      value={facultyForm.qualifications}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-full"
+    />
+    <textarea
+      name="address"
+      placeholder="Address"
+      value={facultyForm.address}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-full"
+    />
+    <input
+      type="email"
+      name="email"
+      placeholder="Email"
+      value={facultyForm.email}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-64"
+      required
+    />
+    <input
+      type="text"
+      name="phone"
+      placeholder="Phone"
+      value={facultyForm.phone}
+      onChange={(e) => handleChange(e, setFacultyForm, facultyForm)}
+      className="border p-1 rounded w-64"
+    />
+    <input
+      type="number"
+      name="publications"
+      placeholder="Publications"
+      value={facultyForm.achievements?.publications}
+      onChange={(e) =>
+        setFacultyForm({
+          ...facultyForm,
+          achievements: {
+            ...facultyForm.achievements,
+            publications: e.target.value,
+          },
+        })
+      }
+      className="border p-1 rounded w-40"
+    />
+    <input
+      type="text"
+      name="awards"
+      placeholder="Awards (comma separated)"
+      value={facultyForm.achievements.awards}
+      onChange={(e) =>
+        setFacultyForm({
+          ...facultyForm,
+          achievements: {
+            ...facultyForm.achievements,
+            awards: e.target.value,
+          },
+        })
+      }
+      className="border p-1 rounded w-64"
+    />
+    <input
+      type="number"
+      name="projects"
+      placeholder="Projects"
+      value={facultyForm.achievements.projects}
+      onChange={(e) =>
+        setFacultyForm({
+          ...facultyForm,
+          achievements: {
+            ...facultyForm.achievements,
+            projects: e.target.value,
+          },
+        })
+      }
+      className="border p-1 rounded w-40"
+    />
+
+    <button
+      onClick={addFaculty}
+      className="bg-sky-600 text-white px-3 rounded"
+    >
+      Add Faculty
+    </button>
+  </div>
+
+  {/* Faculty List */}
+  <ul className="space-y-2">
+    {faculty.map((f) => (
+      <li
+        key={f._id}
+        className="flex items-center justify-between border-b py-2"
+      >
+        <div className="flex items-center gap-3">
+          <img
+            src={f.image}
+            alt={f.name}
+            className="w-16 h-16 object-cover rounded-full border"
+          />
+          <div>
+            <p className="font-medium">{f.name}</p>
+            <p className="text-sm text-gray-600">
+              {f.designation}, {f.department}
+            </p>
+            <p className="text-xs text-gray-500">
+              Publications: {f.achievements?.publications || 0} | Projects:{" "}
+              {f.achievements?.projects || 0}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => updateFaculty(f._id, f)}
+            className="text-blue-600"
+          >
+            Update
+          </button>
+          <button
+            onClick={() => deleteFaculty(f._id)}
+            className="text-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
 
 
         {/* Other sections (Publications, Announcements, Useful Links) remain mostly the same */}
