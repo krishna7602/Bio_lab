@@ -11,6 +11,12 @@ const AdminDashboard = ({ onClose }) => {
   const [researchAreas, setResearchAreas] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [faculty, setFaculty] = useState([]);
+  const [logo, setLogo] = useState([]);
+  const [logoForm, setLogoForm] = useState({
+  logo: "",
+  labname: "Bio Technology",
+  description: "",
+});
   // Form states
   const [personForm, setPersonForm] = useState({
     name: "",
@@ -49,6 +55,7 @@ const AdminDashboard = ({ onClose }) => {
     projects: 0,
   },
 });
+
   const fetchData = async () => {
     try {
       const peopleRes = await axios.get("http://localhost:8001/api/v1/users/getAllStudent");
@@ -68,6 +75,9 @@ const AdminDashboard = ({ onClose }) => {
 
       const facultyRes = await axios.get("http://localhost:8001/api/v1/users/faculty");
     setFaculty(facultyRes.data.data);
+
+    const getLogoData=await axios.get("http://localhost:8001/api/v1/users/logo/");
+    setLogo(getLogoData.data.data);
     } catch (err) {
       setError("Failed to fetch data");
       console.error(err);
@@ -290,6 +300,35 @@ const updateFaculty = async (id, updatedData) => {
   }
 };
 
+const addLogo = async () => {
+  try {
+    await axios.post(
+      "http://localhost:8001/api/v1/users/logo",
+      logoForm,
+      { withCredentials: true }
+    );
+    setSuccess("Logo added successfully");
+    setLogoForm({ logo: "", labname: "Bio Technology", description: "" });
+    fetchData();
+  } catch (err) {
+    setError("Failed to add logo");
+  }
+};
+
+// Delete Logo
+const deleteLogo = async (id) => {
+  try {
+    await axios.post(
+      `http://localhost:8001/api/v1/users/logo/${id}`,
+      {},
+      { withCredentials: true }
+    );
+    setSuccess("Logo deleted successfully");
+    fetchData();
+  } catch (err) {
+    setError("Failed to delete logo");
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 overflow-auto flex justify-center items-start z-50 py-10">
@@ -299,8 +338,78 @@ const updateFaculty = async (id, updatedData) => {
         {error && <p className="text-red-600">{error}</p>}
         {success && <p className="text-green-600">{success}</p>}
 
+        {/* logo */}
+        {/* Logo Section */}
+<section className="mb-6 p-4 bg-gray-50 rounded shadow">
+  <h2 className="text-xl font-semibold mb-2">Manage Logo</h2>
+
+  {/* Add Logo Form */}
+  <div className="flex flex-wrap gap-2 mb-2 items-center">
+    <input
+      type="url"
+      name="logo"
+      placeholder="Logo URL"
+      value={logoForm.logo}
+      onChange={(e) => handleChange(e, setLogoForm, logoForm)}
+      className="border p-1 rounded w-64"
+      required
+    />
+    <input
+      type="text"
+      name="labname"
+      placeholder="Lab Name"
+      value={logoForm.labname}
+      onChange={(e) => handleChange(e, setLogoForm, logoForm)}
+      className="border p-1 rounded w-64"
+      required
+    />
+    <input
+      type="text"
+      name="description"
+      placeholder="Description"
+      value={logoForm.description}
+      onChange={(e) => handleChange(e, setLogoForm, logoForm)}
+      className="border p-1 rounded w-72"
+    />
+    <button
+      onClick={addLogo}
+      className="bg-sky-600 text-white px-3 rounded"
+    >
+      Add Logo
+    </button>
+  </div>
+
+  {/* List of Logos */}
+  <ul className="space-y-2">
+    {logo.map((l) => (
+      <li
+        key={l._id}
+        className="flex items-center justify-between border-b py-2"
+      >
+        <div className="flex items-center gap-3">
+          <img
+            src={l.logo}
+            alt="Lab Logo"
+            className="w-16 h-16 object-contain rounded border bg-white"
+          />
+          <div>
+            <p className="font-medium">{l.labname}</p>
+            <p className="text-sm text-gray-600">{l.description}</p>
+          </div>
+        </div>
+        <button
+          onClick={() => deleteLogo(l._id)}
+          className="text-red-600"
+        >
+          Delete
+        </button>
+      </li>
+    ))}
+  </ul>
+</section>
+
         {/* People */}
-        {/* People */}
+
         <section className="mb-6 p-4 bg-gray-50 rounded shadow">
         <h2 className="text-xl font-semibold mb-2">Manage People</h2>
         <div className="flex flex-wrap gap-2 mb-2 items-center">
