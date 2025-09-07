@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function FacultyProfile() {
   const [faculty, setFaculty] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8001/api/v1/users/faculty/")
+    fetch(`${API_BASE_URL}/faculty/`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

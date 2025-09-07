@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const ImpinfoCrousal = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const res = await fetch("http://localhost:8001/api/v1/users/getAllAnnouncement");
+        const res = await fetch(`${API_BASE_URL}/getAllAnnouncement`);
         const data = await res.json();
 
         // Filter only important announcements

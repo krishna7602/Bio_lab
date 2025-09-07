@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AdminDashboard = ({ onClose }) => {
   const [people, setPeople] = useState([]);
@@ -58,25 +59,25 @@ const AdminDashboard = ({ onClose }) => {
 
   const fetchData = async () => {
     try {
-      const peopleRes = await axios.get("http://localhost:8001/api/v1/users/getAllStudent");
+      const peopleRes = await axios.get(`${API_BASE_URL}/getAllStudent`);
       setPeople(peopleRes.data.data);
-      const pubRes = await axios.get("http://localhost:8001/api/v1/users/publications");
+      const pubRes = await axios.get(`${API_BASE_URL}/publications`);
       setPublications(pubRes.data.data);
-      const annRes = await axios.get("http://localhost:8001/api/v1/users/getAllAnnouncement");
+      const annRes = await axios.get(`${API_BASE_URL}/getAllAnnouncement`);
       setAnnouncements(annRes.data.data);
-      const linksRes = await axios.get("http://localhost:8001/api/v1/users/getAllUsefullLinks");
+      const linksRes = await axios.get(`${API_BASE_URL}/getAllUsefullLinks`);
       setLinks(linksRes.data.data);
       const researchRes = await axios.get(
-        "http://localhost:8001/api/v1/users/research-areas"
+        `${API_BASE_URL}/research-areas`
       );
       setResearchAreas(researchRes.data.data);
-      const galleryRes = await axios.get("http://localhost:8001/api/v1/users/gallery");
+      const galleryRes = await axios.get(`${API_BASE_URL}/gallery`);
       setGallery(galleryRes.data.data);
 
-      const facultyRes = await axios.get("http://localhost:8001/api/v1/users/faculty");
+      const facultyRes = await axios.get(`${API_BASE_URL}/faculty`);
     setFaculty(facultyRes.data.data);
 
-    const getLogoData=await axios.get("http://localhost:8001/api/v1/users/logo/");
+    const getLogoData=await axios.get(`${API_BASE_URL}/logo/`);
     setLogo(getLogoData.data.data);
     } catch (err) {
       setError("Failed to fetch data");
@@ -99,7 +100,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const addPerson = async () => {
     try {
-      await axios.post("http://localhost:8001/api/v1/users/addstudent", personForm, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/addstudent`, personForm, { withCredentials: true });
       setSuccess("Person added successfully");
       setPersonForm({
         name: "",
@@ -119,7 +120,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const deletePerson = async (id) => {
     try {
-      await axios.post(`http://localhost:8001/api/v1/users/deletestudent/${id}`, {}, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/deletestudent/${id}`, {}, { withCredentials: true });
       setSuccess("Person deleted successfully");
       fetchData();
     } catch (err) {
@@ -129,7 +130,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const addPublication = async () => {
     try {
-      await axios.post("http://localhost:8001/api/v1/users/addpublication", publicationForm, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/addpublication`, publicationForm, { withCredentials: true });
       setSuccess("Publication added successfully");
       setPublicationForm({ title: "", authors: "", journal: "", year: "", description: "", link: "" });
       fetchData();
@@ -138,7 +139,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const deletePublication = async (id) => {
     try {
-      await axios.post(`http://localhost:8001/api/v1/users/publication/${id}`, {}, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/publication/${id}`, {}, { withCredentials: true });
       setSuccess("Publication deleted successfully");
       fetchData();
     } catch (err) { setError("Failed to delete publication"); }
@@ -146,7 +147,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const addAnnouncement = async () => {
     try {
-      await axios.post("http://localhost:8001/api/v1/users/addannouncement", announcementForm, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/addannouncement`, announcementForm, { withCredentials: true });
       setSuccess("Announcement added successfully");
       setAnnouncementForm({ title: "", date: "", link: "", important: false });
       fetchData();
@@ -155,7 +156,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const deleteAnnouncement = async (id) => {
     try {
-      await axios.post(`http://localhost:8001/api/v1/users/deleteannouncement/${id}`, {}, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/deleteannouncement/${id}`, {}, { withCredentials: true });
       setSuccess("Announcement deleted successfully");
       fetchData();
     } catch (err) { setError("Failed to delete announcement"); }
@@ -163,7 +164,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const addLink = async () => {
     try {
-      await axios.post("http://localhost:8001/api/v1/users/addlink", linkForm, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/addlink`, linkForm, { withCredentials: true });
       setSuccess("Link added successfully");
       setLinkForm({ name: "", url: "", category: "" });
       fetchData();
@@ -172,7 +173,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const deleteLink = async (id) => {
     try {
-      await axios.post(`http://localhost:8001/api/v1/users/deletelink/${id}`, {}, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/deletelink/${id}`, {}, { withCredentials: true });
       setSuccess("Link deleted successfully");
       fetchData();
     } catch (err) { setError("Failed to delete link"); }
@@ -188,7 +189,7 @@ const AdminDashboard = ({ onClose }) => {
           .filter((k) => k),
       };
       await axios.post(
-        "http://localhost:8001/api/v1/users/research-areas",
+        `${API_BASE_URL}/research-areas`,
         payload,
         { withCredentials: true }
       );
@@ -202,7 +203,7 @@ const AdminDashboard = ({ onClose }) => {
   const deleteResearchArea = async (id) => {
     try {
       await axios.post(
-        `http://localhost:8001/api/v1/users/research-areas/${id}`,
+        `${API_BASE_URL}/research-areas/${id}`,
         { withCredentials: true }
       );
       setSuccess("Research Area deleted successfully");
@@ -214,7 +215,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const addGallery = async () => {
     try {
-      await axios.post("http://localhost:8001/api/v1/users/gallery", galleryForm, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/gallery`, galleryForm, { withCredentials: true });
       setSuccess("Image added successfully");
       setGalleryForm({ title: "", imageUrl: "" });
       fetchData();
@@ -225,7 +226,7 @@ const AdminDashboard = ({ onClose }) => {
 
   const deleteGallery = async (id) => {
     try {
-      await axios.post(`http://localhost:8001/api/v1/users/gallery/${id}`, {}, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/gallery/${id}`, {}, { withCredentials: true });
       setSuccess("Image deleted successfully");
       fetchData();
     } catch (err) {
@@ -248,7 +249,7 @@ const addFaculty = async () => {
         projects: Number(facultyForm.achievements.projects),
       },
     };
-    await axios.post("http://localhost:8001/api/v1/users/faculty", payload, {
+    await axios.post(`${API_BASE_URL}/faculty`, payload, {
       withCredentials: true,
     });
     setSuccess("Faculty added successfully");
@@ -276,7 +277,7 @@ const addFaculty = async () => {
 
 const deleteFaculty = async (id) => {
   try {
-    await axios.post(`http://localhost:8001/api/v1/users/faculty/${id}`, {
+    await axios.post(`${API_BASE_URL}/faculty/${id}`, {
       withCredentials: true,
     });
     setSuccess("Faculty deleted successfully");
@@ -289,7 +290,7 @@ const deleteFaculty = async (id) => {
 const updateFaculty = async (id, updatedData) => {
   try {
     await axios.put(
-      `http://localhost:8001/api/v1/users/faculty/${id}`,
+      `${API_BASE_URL}/faculty/${id}`,
       updatedData,
       { withCredentials: true }
     );
@@ -303,7 +304,7 @@ const updateFaculty = async (id, updatedData) => {
 const addLogo = async () => {
   try {
     await axios.post(
-      "http://localhost:8001/api/v1/users/logo",
+      `${API_BASE_URL}/logo`,
       logoForm,
       { withCredentials: true }
     );
@@ -319,7 +320,7 @@ const addLogo = async () => {
 const deleteLogo = async (id) => {
   try {
     await axios.post(
-      `http://localhost:8001/api/v1/users/logo/${id}`,
+      `${API_BASE_URL}/logo/${id}`,
       {},
       { withCredentials: true }
     );

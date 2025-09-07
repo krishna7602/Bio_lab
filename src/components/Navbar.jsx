@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import AdminAuthModal from "./AdminAuthModal";
 import AdminDashboard from "./AdminDashboard";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Navbar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [dashboardOpen, setDashboardOpen] = useState(false);
@@ -11,7 +11,7 @@ const Navbar = () => {
 
   // Fetch logo + title from API
   useEffect(() => {
-    fetch("http://localhost:8001/api/v1/users/logo/")
+    fetch(`${API_BASE_URL}/logo/`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data.length > 0) {

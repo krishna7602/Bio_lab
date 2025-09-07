@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Beaker, Cpu, Microscope, Atom, Dna, Activity } from "lucide-react";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const iconMap = {
   "Computational Biology": Cpu,
   "Synthetic Biology": Beaker,
@@ -32,7 +32,7 @@ const ResearchAreas = () => {
     const fetchAreas = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8001/api/v1/users/research-areas/"
+          `${API_BASE_URL}/research-areas/`
         );
         setAreas(res.data.data);
       } catch (err) {

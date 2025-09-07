@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Hero() {
   const [labData, setLabData] = useState({ labname: "", description: "" });
@@ -28,7 +29,7 @@ export default function Hero() {
   useEffect(() => {
     const fetchLabData = async () => {
       try {
-        const res = await fetch("http://localhost:8001/api/v1/users/logo/", {
+        const res = await fetch(`${API_BASE_URL}/logo/`, {
           credentials: "include",
         });
         const data = await res.json();

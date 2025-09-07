@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function UsefulLinks() {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,7 +7,7 @@ export default function UsefulLinks() {
   useEffect(() => {
     const fetchLinks = async () => {
       try {
-        const res = await fetch("http://localhost:8001/api/v1/users/getAllUsefullLinks");
+        const res = await fetch(`${API_BASE_URL}/getAllUsefullLinks`);
         const data = await res.json();
         setLinks(data.data || []); // API response assumed as { success, data: [...] }
       } catch (error) {

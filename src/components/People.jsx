@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function People() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,7 +7,7 @@ export default function People() {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const res = await fetch("http://localhost:8001/api/v1/users/getAllStudent");
+        const res = await fetch(`${API_BASE_URL}/getAllStudent`);
         const data = await res.json();
 
         if (data.success && Array.isArray(data.data)) {

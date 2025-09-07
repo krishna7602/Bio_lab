@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Publication = ({ title, authors, journal, year, link, description }) => (
   <li className="py-6">
     <h3 className="text-lg font-semibold text-blue-700 hover:underline">
@@ -22,7 +22,7 @@ const Publications = () => {
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const res = await fetch("http://localhost:8001/api/v1/users/publications");
+        const res = await fetch(`${API_BASE_URL}/publications`);
         const data = await res.json();
 
         if (data.success && Array.isArray(data.data)) {
