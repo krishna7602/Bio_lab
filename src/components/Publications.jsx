@@ -11,7 +11,9 @@ const Publication = ({ title, authors, journal, year, link, description }) => (
       </a>
     </h3>
     <p className="text-sm text-gray-600">{authors}</p>
-    <p className="italic text-gray-500">{journal}, {year}</p>
+    <p className="italic text-gray-500">
+      {journal}, {year}
+    </p>
     <p className="mt-2 text-gray-700 text-justify">{description}</p>
   </li>
 );
@@ -23,15 +25,11 @@ const Publications = () => {
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/publications/`);
-        console.log("API Response:", res.data);
+        const data  = await axios.get(`${API_BASE_URL}/publications`);
 
-        // Access the nested data array
-        if (res.data.success && Array.isArray(res.data.data)) {
-          setPubs(res.data.data);
-        } else {
-          console.error("Invalid API response format:", res.data);
-        }
+        
+          setPubs(data.data.data);
+        
       } catch (error) {
         console.error("Error fetching publications:", error);
       } finally {
