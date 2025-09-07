@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -24,8 +25,7 @@ const Publications = () => {
   useEffect(() => {
     const fetchPublications = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/publications`);
-        const data = await res.json();
+        const { data } = await axios.get(`${API_BASE_URL}/publications`);
 
         if (data.success && Array.isArray(data.data)) {
           setPubs(data.data);
