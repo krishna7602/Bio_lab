@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import AdminDashboard from "./AdminDashboard"; // import the dashboard
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 const AdminAuthModal = ({ onClose }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -19,7 +21,7 @@ const AdminAuthModal = ({ onClose }) => {
 
       if (isRegister) {
         const res = await axios.post(
-          "http://localhost:8001/api/v1/users/register",
+          `${API_BASE_URL}/register`,
           { name, email, password },
           { withCredentials: true }
         );
@@ -27,7 +29,7 @@ const AdminAuthModal = ({ onClose }) => {
         setIsRegister(false);
       } else {
         const res = await axios.post(
-          "http://localhost:8001/api/v1/users/login",
+          `${API_BASE_URL}login`,
           { email, password },
           { withCredentials: true }
         );
