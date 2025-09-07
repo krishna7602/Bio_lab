@@ -130,7 +130,15 @@ const AdminDashboard = ({ onClose }) => {
 
   const addPublication = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/addpublication`, publicationForm, { withCredentials: true });
+      await axios.post(
+  `${API_BASE_URL}/addpublication`,
+  publicationForm,
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }
+);
       setSuccess("Publication added successfully");
       setPublicationForm({ title: "", authors: "", journal: "", year: "", description: "", link: "" });
       fetchData();
