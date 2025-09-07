@@ -9,7 +9,7 @@ import UsefulLinks from "../components/UsefulLinks";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import People from "../components/People.jsx";
-import Publications from "../components/Publications";
+import Publications from "../components/Publications.jsx";
 import ResearchAreas from "../components/ResearchAreas";
 import ImpinfoCrousal from "../components/ImpinfoCrousal.jsx";
 
