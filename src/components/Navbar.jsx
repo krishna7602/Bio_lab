@@ -79,9 +79,10 @@ const Navbar = () => {
   rel="noopener noreferrer"
   className="relative group flex items-center"
 >
+  <br />
   
   <FaGithub className="text-slate-700 hover:text-black" size={28} />
-  
+  <p className="mx-2">contribute here</p>
   {/* Tooltip BELOW and centered */}
   <span className="absolute left-1/2 top-10 -translate-x-1/2 px-3 py-1 text-sm bg-black text-white rounded-md opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 whitespace-nowrap shadow-lg">
     ⭐ Please give me a star
