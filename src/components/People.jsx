@@ -80,7 +80,7 @@ export default function People() {
                       rel="noopener noreferrer"
                       className="text-gray-700 hover:underline"
                     >
-                      GitHub
+                      Resume
                     </a>
                   )}
                   {member.socialLinks?.twitter && (
