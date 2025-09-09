@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { FaGithub } from "react-icons/fa"; // GitHub logo
 import AdminAuthModal from "./AdminAuthModal";
 import AdminDashboard from "./AdminDashboard";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Navbar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [dashboardOpen, setDashboardOpen] = useState(false);
@@ -45,8 +48,8 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Menu */}
-        <nav className="hidden md:flex gap-8 items-center text-slate-700 font-medium">
-          <a href="#home" className="hover:text-sky-600 transition-colors">
+        <nav className="hidden md:flex gap-6 items-center text-slate-700 font-medium">
+          <a href="/" className="hover:text-sky-600 transition-colors">
             Home
           </a>
           <a href="#research" className="hover:text-sky-600 transition-colors">
@@ -67,6 +70,23 @@ const Navbar = () => {
           >
             Admin
           </button>
+
+          {/* GitHub Icon with hover popup */}
+          {/* GitHub in mobile menu */}
+            <a
+  href="https://github.com/krishna7602/lab_backend"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="relative group flex items-center"
+>
+  
+  <FaGithub className="text-slate-700 hover:text-black" size={28} />
+  
+  {/* Tooltip BELOW and centered */}
+  <span className="absolute left-1/2 top-10 -translate-x-1/2 px-3 py-1 text-sm bg-black text-white rounded-md opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 whitespace-nowrap shadow-lg">
+    ⭐ Please give me a star
+  </span>
+</a>
         </nav>
 
         {/* Mobile Hamburger */}
@@ -126,6 +146,22 @@ const Navbar = () => {
             >
               Admin
             </button>
+
+            {/* GitHub in mobile menu */}
+            <a
+  href="https://github.com/krishna7602/lab_backend"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="relative group flex items-center"
+>
+  
+  <FaGithub className="text-slate-700 hover:text-black" size={28} />
+  
+  {/* Tooltip BELOW and centered */}
+  <span className="absolute left-1/2 top-10 -translate-x-1/2 px-3 py-1 text-sm bg-black text-white rounded-md opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 whitespace-nowrap shadow-lg">
+    ⭐ Please give me a star
+  </span>
+</a>
           </nav>
         </div>
       )}
