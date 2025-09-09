@@ -12,13 +12,13 @@ const Footer = () => (
       {/* Middle - Credits */}
       <div className="text-gray-700 text-center">
         Designed & Developed by{" "}
-        <span className="font-semibold text-blue-700">
+        <a href="https://linkedin.com/in/ramkrishna-mondal-b73b09294/" target="_blank" className="font-semibold text-blue-700">
           Ramkrishna Mondal
-        </span>{" "}
+        </a>{" "}
         &{" "}
-        <span className="font-semibold text-blue-700">
+        <a href="https://www.linkedin.com/in/vighnesh-aggarwal-703155267/" target="_blank" className="font-semibold text-blue-700">
           Vignesh Agarwal
-        </span>
+        </a>
       </div>
 
       {/* Right side - Links */}
